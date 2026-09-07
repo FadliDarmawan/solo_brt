@@ -28,29 +28,44 @@ dari dalam folder ini. Nggak butuh env var apa pun (semua data statis).
 
 ## Status data per koridor
 
-**Semua 12 koridor sekarang punya geometri + halte ke-snap otomatis** ke garis rute:
+**Semua 12 koridor punya geometri di `routes/<id>.json`**, dengan daftar
+halte-di-sepanjang-garis dihitung otomatis lewat snapping (proyeksi
+titik-ke-garis, threshold 60m):
 
-| Kode | Rute | Halte ke-snap |
-|------|------|----------------|
-| 1  | Terminal Palur — Bandara Adi Soemarmo | 122 |
-| 2  | Terminal Palur — Stasiun Purwosari | 81 |
-| 3  | Terminal Kartasura — Tugu Cembengan | 128 |
-| 4  | Terminal Kartasura — Terminal Palur | 111 |
-| 5  | Terminal Kartasura — Simpang Sidan | 132 |
-| F7 | Ngipang — Pasar Klewer | 70 |
-| F8 | Sub Terminal Pelangi — Pasar Legi (loop) | 40 |
-| F9 | Sub Terminal Pelangi — Sub Terminal Semanggi | 84 |
-| F10 | Terminal Palur — Pasar Klewer (loop) | 56 |
-| F12 | Pasar Klewer — Lapangan Gentan | 93 |
-| S1 | Terminal Tirtonadi — Sumberlawang (Trans Jateng, loop) | 89 |
-| S2 | Terminal Tirtonadi — Wonogiri (Trans Jateng, loop) | 124 |
+| Kode | Rute |
+|------|------|
+| 1  | Terminal Palur — Bandara Adi Soemarmo |
+| 2  | Terminal Palur — Stasiun Purwosari |
+| 3  | Terminal Kartasura — Tugu Cembengan |
+| 4  | Terminal Kartasura — Terminal Palur |
+| 5  | Terminal Kartasura — Simpang Sidan |
+| F7 | Ngipang — Pasar Klewer |
+| F8 | Sub Terminal Pelangi — Pasar Legi (loop) |
+| F9 | Sub Terminal Pelangi — Sub Terminal Semanggi |
+| F10 | Terminal Palur — Pasar Klewer (loop) |
+| F12 | Pasar Klewer — Lapangan Gentan |
+| S1 | Terminal Tirtonadi — Sumberlawang (Trans Jateng) |
+| S2 | Terminal Tirtonadi — Wonogiri (Trans Jateng) |
 
-Snapping pakai proyeksi titik-ke-garis dengan threshold 60 meter. Dari 747
-halte, **7 halte** tidak ke-snap ke koridor manapun (lebih dari 60m dari
-semua garis rute yang ada) — kemungkinan besar terminal/sub-terminal yang
-posisinya agak menjorok dari jalur utama, atau memang belum ke-cover garis
-rute yang ada. Cek `stops/stops.json` untuk entri dengan `services: []` kalau
-mau tahu haltenya yang mana.
+**PENTING — `stops/stops.json` TIDAK pakai hasil snapping.** Awalnya
+`services` per halte diisi otomatis dari hasil snapping di atas, tapi ini
+menghasilkan beberapa false positive (halte yang posisinya kebetulan dekat
+garis rute padahal bus itu nggak benar-benar berhenti di situ). Jadi
+`stops.json` sekarang di-rollback ke data keanggotaan rute asli (dari tag
+OSM, sebelum ada snapping sama sekali) — 743 dari 747 halte punya tag
+`routes` asli, 4 sisanya kosong dari OSM.
+
+Konsekuensinya: keanggotaan rute di `stops.json` (dipakai buat search &
+info "halte ini dilewati rute apa") bisa saja **tidak 100% sinkron** dengan
+daftar halte yang muncul saat rute digambar di `routes/<id>.json` (yang
+masih pakai hasil snapping, karena itu untuk keperluan render garis +
+posisi marker, bukan buat menentukan "beneran berhenti atau nggak"). Kalau
+mau, sesuaikan manual `services` di `stops.json` per halte — formatnya:
+
+```json
+{ "point": "110.xxx -7.xxx", "stop_name": "Nama Halte",
+  "services": [{ "route": "1", "is_departure_hub": false, "destinations": [] }] }
+```
 
 ## Yang sengaja dikosongkan (warisan dari versi Jogja, TIDAK ditebak)
 

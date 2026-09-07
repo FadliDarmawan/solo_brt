@@ -671,9 +671,11 @@
     :root { --rail-gap: 10px; --rail-w: 46px; }
     .rail-badge { font-size: 11px; padding: 0 6px; min-width: 26px; height: 22px; }
     .rail-row { padding: 8px 4px; } /* slightly taller tap target on touch */
-    #brand-creator { font-size: 13px; }
+    #mobile-sheet-title img#brand-logo { height: 30px; }
+    #brand-collab-sep, #brand-creator { font-size: 13px; }
     #brand-title { font-size: 18px; }
     #brand-subtitle { font-size: 11px; }
+    #brand-caption { font-size: 9.5px; }
   }
 
   /* ---- Sheet (shared: same title + search + toggle + route-list panel
@@ -717,12 +719,22 @@
   #brand-collab {
     display: flex; align-items: center; gap: 8px;
   }
+  #mobile-sheet-title img#brand-logo {
+    /* SVG-nya udah include backing pill biru + logo putih sendiri (self-
+       contained, viewBox 432x150 ~2.88:1) -- tinggal size by height, gak
+       perlu plate/crop CSS lagi kayak sebelumnya. */
+    height: 38px; width: auto; display: block; flex: none;
+  }
+  #brand-collab-sep {
+    font-family: "Plus Jakarta Sans", -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+    font-size: 16px; font-weight: 400; color: rgba(28,28,26,0.35); flex: none;
+  }
   #brand-creator {
     font-family: "Plus Jakarta Sans", -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
-    font-size: 16px; font-weight: 700; color: #7a4b2a; letter-spacing: -0.01em; line-height: 1.15;
+    font-size: 16px; font-weight: 700; color: #1055A3; letter-spacing: -0.01em; line-height: 1.15;
   }
   #brand-product {
-    display: flex; flex-direction: column; gap: 1px; min-width: 0;
+    display: flex; flex-direction: column; gap: 1px; min-width: 0; /* min-width:0 lets the caption ellipsis instead of overflowing the sidebar */
   }
   #brand-title {
     font-family: "Plus Jakarta Sans", -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
@@ -731,6 +743,11 @@
   #brand-subtitle {
     font-family: "Plus Jakarta Sans", -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
     font-size: 12.5px; font-weight: 600; color: #1c1c1a; line-height: 1.25; margin-top: 2px;
+  }
+  #brand-caption {
+    font-family: "Plus Jakarta Sans", -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+    font-size: 10.5px; font-weight: 500; color: rgba(28,28,26,0.55); line-height: 1.3;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   }
   #mobile-sheet-search { flex: none; padding: 0 16px 6px; position: relative; }
   #mobile-sheet-toggle {
@@ -975,7 +992,7 @@
 </aside>
 
 <div id="search-wrap">
-  <input id="search-box" type="text" placeholder="Search a stop or route (e.g. Pasar Gede, 1)">
+  <input id="search-box" type="text" placeholder="Search a stop or route (e.g. Malioboro, 1A)">
   <div id="results"></div>
 
   <button id="planner-toggle" type="button">Plan a trip</button>
@@ -1006,11 +1023,14 @@
   <div id="mobile-sheet-header">
     <div id="mobile-sheet-title">
       <div id="brand-collab">
-          <span id="brand-creator">Fadli Darmawan</span>
+        <img id="brand-logo" src="./src/logo-lab-transport.svg" alt="Lab Transport" />
+        <span id="brand-collab-sep">&times;</span>
+        <span id="brand-creator">Fadli Darmawan</span>
       </div>
       <div id="brand-product">
-        <div id="brand-title">Greater Surakarta</div>
+        <div id="brand-title">Soloraya</div>
         <div id="brand-subtitle">Public Transport Map</div>
+        <div id="brand-caption">brtsmg.vercel.app</div>
       </div>
     </div>
   </div>
@@ -1113,7 +1133,7 @@ function buildStopsGeoJSON() {
 // nganggep dua variabel ini udah terisi synchronous, gak perlu direfactor.
 const ROUTE_META = {
   "1": {
-    "title": "Terminal Palur — Bandara Adi Soemarmo",
+    "title": "Batik Solo Trans 1: Terminal Palur — Bandara Adi Soemarmo",
     "color": "#1D87C4",
     "agency": "Batik Solo Trans",
     "display_order": 0,
@@ -1125,134 +1145,134 @@ const ROUTE_META = {
     }
   },
   "2": {
-    "title": "Terminal Palur — Stasiun Purwosari",
+    "title": "Batik Solo Trans 2: Terminal Palur — Stasiun Purwosari",
     "color": "#0D6535",
     "agency": "Batik Solo Trans",
     "display_order": 1,
     "schedule": {
       "type": "daily",
       "hours": [
-        "06:00-18:00"
+        "05:00-21:00"
       ]
     }
   },
   "3": {
-    "title": "Terminal Kartasura — Taman Lansia",
+    "title": "Batik Solo Trans 3: Terminal Kartasura — Taman Lansia",
     "color": "#E1AF79",
     "agency": "Batik Solo Trans",
     "display_order": 2,
     "schedule": {
       "type": "daily",
       "hours": [
-        "06:00-16:00"
+        "05:00-21:00"
       ]
     }
   },
   "4": {
-    "title": "Terminal Kartasura — Terminal Palur",
+    "title": "Batik Solo Trans 4: Terminal Kartasura — Terminal Palur",
     "color": "#9BBA3B",
     "agency": "Batik Solo Trans",
     "display_order": 3,
     "schedule": {
       "type": "daily",
       "hours": [
-        "06:00-16:00"
+        "05:00-21:00"
       ]
     }
   },
   "5": {
-    "title": "Terminal Kartasura — Simpang Sidan",
+    "title": "Batik Solo Trans 5: Terminal Kartasura — Simpang Sidan",
     "color": "#9F91C5",
     "agency": "Batik Solo Trans",
     "display_order": 4,
     "schedule": {
       "type": "daily",
       "hours": [
-        "06:00-16:00"
+        "05:00-21:00"
       ]
     }
   },
   "F7": {
-    "title": "Ngipang — Pasar Klewer",
+    "title": "Batik Solo Trans F7: Ngipang — Pasar Klewer",
     "color": "#96393F",
     "agency": "Batik Solo Trans",
     "display_order": 5,
     "schedule": {
       "type": "daily",
       "hours": [
-        "06:00-16:00"
+        "05:00-21:00"
       ]
     }
   },
   "F8": {
-    "title": "Pelangi Mojosongo — Pasar Legi",
+    "title": "Batik Solo Trans F8: Sub Terminal Pelangi — Pasar Legi",
     "color": "#5B4172",
     "agency": "Batik Solo Trans",
     "display_order": 6,
     "schedule": {
       "type": "daily",
       "hours": [
-        "06:00-16:00"
+        "05:00-21:00"
       ]
     }
   },
   "F9": {
-    "title": "Pelangi Mojosongo — Sub Terminal Semanggi",
+    "title": "Batik Solo Trans F9: Sub Terminal Pelangi — Sub Terminal Semanggi",
     "color": "#35B8B6",
     "agency": "Batik Solo Trans",
     "display_order": 7,
     "schedule": {
       "type": "daily",
       "hours": [
-        "06:00-16:00"
+        "05:00-21:00"
       ]
     }
   },
   "F10": {
-    "title": "Terminal Palur — Pasar Klewer",
+    "title": "Batik Solo Trans F10: Terminal Palur — Pasar Klewer",
     "color": "#E59534",
     "agency": "Batik Solo Trans",
     "display_order": 8,
     "schedule": {
       "type": "daily",
       "hours": [
-        "06:00-16:00"
+        "05:00-21:00"
       ]
     }
   },
   "F12": {
-    "title": "Pasar Klewer — Lapangan Gentan",
+    "title": "Batik Solo Trans F12: Pasar Klewer — Lapangan Gentan",
     "color": "#D5363A",
     "agency": "Batik Solo Trans",
     "display_order": 9,
     "schedule": {
       "type": "daily",
       "hours": [
-        "06:00-16:00"
+        "05:00-21:00"
       ]
     }
   },
   "S1": {
-    "title": "Terminal Tirtonadi — Sumberlawang",
+    "title": "Trans Jateng S1: Terminal Tirtonadi — Sumberlawang",
     "color": "#A14F23",
     "agency": "Trans Jateng",
     "display_order": 10,
     "schedule": {
       "type": "daily",
       "hours": [
-        "05:30-19:00"
+        "05:00-21:00"
       ]
     }
   },
   "S2": {
-    "title": "Terminal Tirtonadi — Wonogiri",
+    "title": "Trans Jateng S2: Terminal Tirtonadi — Wonogiri",
     "color": "#548F45",
     "agency": "Trans Jateng",
     "display_order": 11,
     "schedule": {
       "type": "daily",
       "hours": [
-        "05:30-19:00"
+        "05:00-21:00"
       ]
     }
   }
