@@ -28,36 +28,29 @@ dari dalam folder ini. Nggak butuh env var apa pun (semua data statis).
 
 ## Status data per koridor
 
-**Sudah ada geometri + halte ke-snap otomatis ke garis rute** (7 koridor):
+**Semua 12 koridor sekarang punya geometri + halte ke-snap otomatis** ke garis rute:
 
 | Kode | Rute | Halte ke-snap |
 |------|------|----------------|
 | 1  | Terminal Palur — Bandara Adi Soemarmo | 122 |
 | 2  | Terminal Palur — Stasiun Purwosari | 81 |
+| 3  | Terminal Kartasura — Tugu Cembengan | 128 |
 | 4  | Terminal Kartasura — Terminal Palur | 111 |
+| 5  | Terminal Kartasura — Simpang Sidan | 132 |
 | F7 | Ngipang — Pasar Klewer | 70 |
 | F8 | Sub Terminal Pelangi — Pasar Legi (loop) | 40 |
 | F9 | Sub Terminal Pelangi — Sub Terminal Semanggi | 84 |
 | F10 | Terminal Palur — Pasar Klewer (loop) | 56 |
+| F12 | Pasar Klewer — Lapangan Gentan | 93 |
+| S1 | Terminal Tirtonadi — Sumberlawang (Trans Jateng, loop) | 89 |
+| S2 | Terminal Tirtonadi — Wonogiri (Trans Jateng, loop) | 124 |
 
-Snapping pakai proyeksi titik-ke-garis dengan threshold 60 meter — kalau ada
-halte yang "hilang" dari suatu koridor padahal seharusnya masuk, kemungkinan
-jaraknya >60m dari garis rute (garis kurang presisi atau halte-nya memang
-agak jauh dari jalan utama).
-
-**Ada di daftar rute tapi BELUM ada file geometri** (5 koridor — rail/list
-tetap muncul, tapi klik rutenya belum nggambar garis):
-
-- `3` — Terminal Kartasura — Taman Lansia
-- `5` — Terminal Kartasura — Simpang Sidan
-- `F12` — Pasar Klewer — Lapangan Gentan
-- `S1` — Terminal Tirtonadi — Sumberlawang (Trans Jateng)
-- `S2` — Terminal Tirtonadi — Wonogiri (Trans Jateng)
-
-Halte yang termasuk 6 koridor ini masih pakai data keanggotaan rute dari tag
-OSM lama (belum di-snap ke garis), jadi kemungkinan kurang lengkap/akurat.
-Begitu kamu punya file polyline buat koridor-koridor ini, kirim ke Claude —
-proses snapping-nya sama persis kayak yang 6 di atas.
+Snapping pakai proyeksi titik-ke-garis dengan threshold 60 meter. Dari 747
+halte, **7 halte** tidak ke-snap ke koridor manapun (lebih dari 60m dari
+semua garis rute yang ada) — kemungkinan besar terminal/sub-terminal yang
+posisinya agak menjorok dari jalur utama, atau memang belum ke-cover garis
+rute yang ada. Cek `stops/stops.json` untuk entri dengan `services: []` kalau
+mau tahu haltenya yang mana.
 
 ## Yang sengaja dikosongkan (warisan dari versi Jogja, TIDAK ditebak)
 
