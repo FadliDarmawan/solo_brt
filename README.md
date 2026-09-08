@@ -67,6 +67,28 @@ mau, sesuaikan manual `services` di `stops.json` per halte — formatnya:
   "services": [{ "route": "1", "is_departure_hub": false, "destinations": [] }] }
 ```
 
+## Papan jadwal keberangkatan (terminus)
+
+Klik halte-halte terminus berikut buat lihat papan keberangkatan langsung
+di popup-nya — 1 baris "sudah berangkat" (abu-abu), sampai 4 jadwal
+berikutnya (paling atas ditebalkan + label "Berikutnya"), bus terakhir
+hari itu dapat badge merah "Bus terakhir", dan begitu lewat jam segitu
+tampil "Tidak ada pemberangkatan lagi hari ini". Waktunya dihitung dari
+jam di browser kamu (live), bukan simulasi seperti demo widget-nya.
+
+| Halte terminus | Rute yang ditampilkan |
+|---|---|
+| Terminal Palur | 1, 2, F10 |
+| Terminal Kartasura | 3, 4, 5 |
+| Terminal Ngipang | F7 |
+| Pelangi Mojosongo | F8, F9 |
+| Pasar Klewer | F12 |
+
+Data jadwalnya nempel di stop yang sesuai di dalam `routes/<id>.json`
+masing-masing (field `departures`, array string `"HH:MM"`), bukan file
+terpisah — tinggal edit array itu kalau ada revisi jam. Logic tampilannya
+ada di `getStopDepartures` / `buildDepartureBoard` di `index.html`.
+
 ## Yang sengaja dikosongkan (warisan dari versi Jogja, TIDAK ditebak)
 
 - `ROUTE_DIRECTIONS` — titik start/wayback per koridor buat tombol "Show

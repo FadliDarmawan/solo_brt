@@ -257,6 +257,23 @@
     font-variant-numeric: tabular-nums;
     color: rgba(28,28,26,0.75);
   }
+  .dep-row {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 8px; padding: 3px 0;
+    font-variant-numeric: tabular-nums;
+  }
+  .dep-row-past { color: rgba(28,28,26,0.42); }
+  .dep-row-next { font-weight: 700; }
+  .dep-row-tag { font-size: 10px; font-weight: 700; }
+  .dep-row-soon { color: #185fa5; }
+  .dep-row-last {
+    color: #a32d2d; background: rgba(163,45,45,0.12);
+    padding: 1px 6px; border-radius: 6px;
+  }
+  .dep-row-empty {
+    color: #a32d2d; font-weight: 600; text-align: center;
+    padding: 4px 0;
+  }
   .service-row {
     display: flex; align-items: center; flex-wrap: wrap; gap: 6px;
   }
@@ -4887,17 +4904,40 @@ function syncRouteDetailSelection(coords, name) {
 }
 
 // Looks across every route serving this stop for a real departures list
-// (see extractOrderedStops -- currently only SIBULAN2's two termini carry
-// one). Returns the first match; a stop with a real fixed timetable on
-// more than one serving route isn't a case that exists yet, so this
-// doesn't try to merge/list several.
+// (see extractOrderedStops -- currently the 5 corridor termini: Palur,
+// Kartasura, Ngipang, Pelangi Mojosongo, Pasar Klewer). Returns ALL
+// matches, not just the first -- a shared terminus like Terminal Palur
+// legitimately has more than one route's timetable to show side by side.
 function getStopDepartures(name, services) {
+  const results = [];
   for (const sv of services) {
     const stops = ROUTE_ORDERED_STOPS[sv.route] || [];
     const match = stops.find(s => s.name === name && Array.isArray(s.departures) && s.departures.length);
-    if (match) return { routeId: sv.route, departures: match.departures };
+    if (match) results.push({ routeId: sv.route, departures: match.departures });
   }
-  return null;
+  return results.length ? results : null;
+}
+
+// Splits one route's HH:MM departure list into a small departure board:
+// the single most recent departure (if any), and up to the next 4
+// upcoming ones, with the day's last departure flagged separately so the
+// caller can style it as "last bus" instead of a plain upcoming time.
+function buildDepartureBoard(departures) {
+  const now = new Date();
+  const nowMin = now.getHours() * 60 + now.getMinutes();
+  const toMin = t => { const [h, m] = t.split(":").map(Number); return h * 60 + m; };
+  const mins = departures.map(toMin);
+  const lastMin = mins[mins.length - 1];
+
+  let past = null;
+  for (let i = mins.length - 1; i >= 0; i--) {
+    if (mins[i] <= nowMin) { past = departures[i]; break; }
+  }
+  const upcoming = [];
+  for (let i = 0; i < departures.length && upcoming.length < 4; i++) {
+    if (mins[i] > nowMin) upcoming.push({ time: departures[i], isLast: mins[i] === lastMin });
+  }
+  return { past, upcoming, noMoreToday: nowMin >= lastMin };
 }
 
 function showPopup(coords, name, services) {
@@ -4926,10 +4966,27 @@ function showPopup(coords, name, services) {
 
   const stopDepartures = getStopDepartures(name, services);
   const timetableNote = stopDepartures
-    ? `<div class="popup-timetable">
-        <div class="popup-timetable-label">${clockIcon} Jadwal keberangkatan (${stopDepartures.routeId})</div>
-        <div class="popup-timetable-times">${stopDepartures.departures.join(" &middot; ")}</div>
-      </div>`
+    ? stopDepartures.map(sd => {
+        const board = buildDepartureBoard(sd.departures);
+        const meta = ROUTE_META[sd.routeId];
+        const color = meta ? meta.color : "#888";
+        const pastRow = board.past
+          ? `<div class="dep-row dep-row-past"><span>${board.past}</span><span class="dep-row-tag">Sudah berangkat</span></div>`
+          : "";
+        const upcomingRows = board.noMoreToday
+          ? `<div class="dep-row dep-row-empty">Tidak ada pemberangkatan lagi hari ini</div>`
+          : board.upcoming.map((d, i) => `
+              <div class="dep-row ${i === 0 ? "dep-row-next" : ""}">
+                <span>${d.time}</span>
+                <span class="dep-row-tag ${d.isLast ? "dep-row-last" : (i === 0 ? "dep-row-soon" : "")}">
+                  ${d.isLast ? "Bus terakhir" : (i === 0 ? "Berikutnya" : "")}
+                </span>
+              </div>`).join("");
+        return `<div class="popup-timetable">
+          <div class="popup-timetable-label" style="color:${color};">${clockIcon} Jadwal ${sd.routeId}</div>
+          ${pastRow}${upcomingRows}
+        </div>`;
+      }).join("")
     : "";
 
   const activeRouteId = routeIdFromHash();
